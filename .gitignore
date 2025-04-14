@@ -1,0 +1,8 @@
+# Arquivos do NetBeans
+nbproject/
+build/
+dist/
+*.nbattrs
+
+# Arquivos de banco de dados
+*.sql
