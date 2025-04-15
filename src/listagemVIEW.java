@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.util.logging.Logger;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -136,12 +138,30 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
-        
-        ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+        try {
+            String idText = id_produto_venda.getText();
+            if (idText.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Digite o ID do produto para vender!");
+                return;
+            }
+
+            int id = Integer.parseInt(idText);
+            if (id <= 0) {
+                JOptionPane.showMessageDialog(null, "O ID deve ser um número positivo!");
+                return;
+            }
+
+            ProdutosDAO produtosdao = new ProdutosDAO();
+            produtosdao.venderProduto(id);
+
+            JOptionPane.showMessageDialog(null, "Produto vendido com sucesso!");
+            listarProdutos(); // Atualiza a tabela após a venda
+            id_produto_venda.setText(""); // Limpa o campo
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "O ID deve ser um número inteiro!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao vender produto: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
@@ -221,8 +241,9 @@ public class listagemVIEW extends javax.swing.JFrame {
                     listagem.get(i).getStatus()
                 });
             }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Erro ao listar produtos: " + e.getMessage());
+        } catch (Exception e) {
+        }
+    
     }
 }
 
