@@ -120,4 +120,42 @@ public class ProdutosDAO {
             }
         }
     }
+
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+    ArrayList<ProdutosDTO> listaVendidos = new ArrayList<>();
+    Connection conn = null;
+    PreparedStatement prep = null;
+    ResultSet rs = null;
+    try {
+        conn = new conectaDAO().connectDB();
+        if (conn == null) {
+            throw new RuntimeException("Falha ao conectar ao banco: conexão é null");
+        }
+
+        String sql = "SELECT * FROM produtos WHERE status = ?";
+        prep = conn.prepareStatement(sql);
+        prep.setString(1, "Vendido");
+        rs = prep.executeQuery();
+
+        while (rs.next()) {
+            ProdutosDTO produto = new ProdutosDTO();
+            produto.setId(rs.getInt("id"));
+            produto.setNome(rs.getString("nome"));
+            produto.setValor(rs.getInt("valor"));
+            produto.setStatus(rs.getString("status"));
+            listaVendidos.add(produto);
+        }
+    } catch (SQLException erro) {
+        throw new RuntimeException("Erro ao listar produtos vendidos: " + erro.getMessage());
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (prep != null) prep.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao fechar conexão: " + e.getMessage());
+        }
+    }
+    return listaVendidos;
+}
 }
